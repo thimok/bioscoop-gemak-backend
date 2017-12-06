@@ -1,11 +1,22 @@
 var express = require('express');
 var routes = express.Router();
 var mongodb = require('../../config/mongo.db');
+var neo4j = require('../../config/neo4j.db');
 var Movie = require('../../model/movie.model');
 
 routes.get('/movies', function (req, res) {
 	Movie.find({})
 		.then((movies) => {
+			neo4j.run('MATCH (n) RETURN n')
+				.then((result) => {
+					var resArr = [];
+					result.records.forEach(function(record) {
+						resArr.push(record._fields[0].properties);
+					});
+					
+					console.log('Result');
+					console.log(resArr.json());
+				});
 			res.status(200).json(movies);
 		})
 		.catch((error) => res.status(400).json(error));
