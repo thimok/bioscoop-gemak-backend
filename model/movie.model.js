@@ -6,8 +6,10 @@ const MovieSchema = new Schema({
 		type: String,
 		required: true
 	},
+	description: String,
 	release: String,
-	genre: String
+	genre: String,
+	imageUrl: String
 }, {
 	timestamps: true
 });
