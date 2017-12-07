@@ -35,6 +35,8 @@ routes.get('/movies/:id', function (req, res) {
 routes.post('/movies', function (req, res) {
 	const body = req.body;
 	
+	delete body._id; //Remove the empty ID that gets inserted by Angular as this generates a BadRequest response.
+	
 	Movie.create(body)
 		.then((movie) => res.status(200).json(movie))
 		.catch((error) => res.status(400).json(error));
