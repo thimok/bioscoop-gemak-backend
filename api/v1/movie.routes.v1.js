@@ -7,11 +7,14 @@ var Movie = require('../../model/movie.model');
 routes.get('/movies', function (req, res) {
 	Movie.find({})
 		.then((movies) => {
-			neo4j.run('MATCH (n) RETURN n')
+			neo4j.session.run('MATCH (n) RETURN n')
 				.then((result) => {
 					var resArr = [];
-					result.records.forEach(function(record) {
-						resArr.push(record._fields[0].properties);
+					result.records.forEach(function (record) {
+						resArr.push({
+							name: record._fields[0].properties.name,
+							mongoId: record._fields[0].properties.mongoId
+						});
 					});
 					
 					console.log('Result');
@@ -38,7 +41,16 @@ routes.post('/movies', function (req, res) {
 	delete body._id; //Remove the empty ID that gets inserted by Angular as this generates a BadRequest response.
 	
 	Movie.create(body)
-		.then((movie) => res.status(200).json(movie))
+		.then((movie) => {
+			const movieId = movie._id + '';
+			neo4j.session
+				.run("CREATE (movie:Movie{name: {nameParam}, mongoId: {idParam}}) RETURN movie", {nameParam: body.name, idParam: movieId})
+				.then(() => {
+					neo4j.close();
+					res.status(200).json(movie)
+				})
+				.catch((error) => res.status(400).json(error.message));
+		})
 		.catch((error) => res.status(400).json(error));
 });
 

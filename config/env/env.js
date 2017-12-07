@@ -18,7 +18,7 @@ var dburl = process.env.NODE_ENV === 'production' ?
 
 var neo4jurl = process.env.NODE_ENV === 'production' ?
 	'bolt://' + env.neo4jHost + ':' + env.neo4jPort :
-	'bolt://localhost:7474';
+	'bolt://localhost:7687';
 
 module.exports = {
 	env: env,
