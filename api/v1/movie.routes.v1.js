@@ -81,7 +81,7 @@ routes.post('/movies/:id/actors', function (req, res) {
 	const name = body.name;
 	
 	neo4j.session
-		.run("CREATE (a:Actor{name: {nameParam}}) RETURN a", {nameParam: name})
+		.run("MERGE (a:Actor{name: {nameParam}}) RETURN a", {nameParam: name})
 		.then(() => {
 			neo4j.session
 				.run("MATCH (a:Actor{name: {nameParam}}), (m:Movie{mongoId: {idParam}}) CREATE UNIQUE (a)-[:ACTS_IN]->(m) RETURN a, m", {
@@ -120,7 +120,23 @@ routes.delete('/movies/:id', function (req, res) {
 			if (movie == null || movie == 'null') {
 				res.status(400).json({error: 'No objects deleted'});
 			} else {
-				res.status(200).json(movie);
+				// neo4j.session
+				// 	.run("MATCH (n:Actor) OPTIONAL MATCH (n)-[r]-(m:Movie{mongoId: {idParam}}) DELETE r, n, m", {
+				// 		idParam: id
+				// 	})
+				// 	.then((result) => {
+				// 		neo4j.close();
+				// 		res.status(200).json(movie);
+				// 	});
+				
+				neo4j.session
+					.run("MATCH (m:Movie{mongoId: {idParam}}) DETACH DELETE m", {
+						idParam: id
+					})
+					.then((result) => {
+						neo4j.close();
+						res.status(200).json(movie);
+					});
 			}
 		})
 		.catch((error) => res.status(400).json(error));
