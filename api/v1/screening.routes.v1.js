@@ -63,6 +63,8 @@ routes.get('/screenings/:id', function (req, res) {
 routes.post('/screenings', function (req, res) {
 	const body = req.body;
 	
+	delete body._id;
+	
 	Screening.create(body)
 		.then((screening) => res.status(200).json(screening))
 		.catch((error) => res.status(400).json(error));
