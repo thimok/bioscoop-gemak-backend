@@ -24,6 +24,8 @@ routes.get('/theaters/:id', function (req, res) {
 routes.post('/theaters', function (req, res) {
 	const body = req.body;
 	
+	delete body._id;
+	
 	Theater.create(body)
 		.then((theater) => res.status(200).json(theater))
 		.catch((error) => res.status(400).json(error));
