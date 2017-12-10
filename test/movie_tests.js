@@ -2,7 +2,6 @@ var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../server');
 var should = chai.should();
-var assert = require('assert');
 var Movie = require('../model/movie.model');
 
 chai.use(chaiHttp);
