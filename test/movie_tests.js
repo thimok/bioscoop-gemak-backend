@@ -92,7 +92,7 @@ describe('Movie Domain Test', () => {
 			});
 	});
 	
-	it('PUT /api/v1/movies/5a2d4166e03ac13ea48ac2e6 should update a Movie and return the updated object in JSON format', (done) => {
+	it('PUT /api/v1/movies/:id should update a Movie and return the updated object in JSON format', (done) => {
 		chai.request(server)
 			.put('/api/v1/movies/5a2d4166e03ac13ea48ac2e6')
 			.send(movieToEdit)
@@ -108,7 +108,7 @@ describe('Movie Domain Test', () => {
 			});
 	});
 	
-	it('DELETE /api/v1/movies/5a2d4166e03ac13ea48ac2e7 should delete a Movie and return the object in JSON format', (done) => {
+	it('DELETE /api/v1/movies/:id should delete a Movie and return the object in JSON format', (done) => {
 		chai.request(server)
 			.delete('/api/v1/movies/5a2d4166e03ac13ea48ac2e7')
 			.end((err, res) => {
