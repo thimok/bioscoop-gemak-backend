@@ -5,6 +5,7 @@ var Theater = require('../../model/theater.model');
 
 routes.get('/theaters', function (req, res) {
 	Theater.find({})
+		.populate('screenings')
 		.then((theaters) => {
 			res.status(200).json(theaters);
 		})
@@ -15,6 +16,7 @@ routes.get('/theaters/:id', function (req, res) {
 	const id = req.params.id;
 	
 	Theater.find({_id: id})
+		.populate('screenings')
 		.then((theater) => {
 			res.status(200).json(theater);
 		})

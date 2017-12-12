@@ -2,6 +2,8 @@ var express = require('express');
 var routes = express.Router();
 var mongodb = require('../../config/mongo.db');
 var Screening = require('../../model/screening.model');
+var Movie = require('../../model/movie.model');
+var Theater = require('../../model/theater.model');
 
 //GET /screenings
 //OPTIONAL query parameters:
@@ -65,8 +67,27 @@ routes.post('/screenings', function (req, res) {
 	
 	delete body._id;
 	
+	// Screening.create(body)
+	// 	.then((screening) => res.status(200).json(screening))
+	// 	.catch((error) => res.status(400).json(error));
 	Screening.create(body)
-		.then((screening) => res.status(200).json(screening))
+		.then((screening) => {
+			Movie.findOne({'_id': screening.movieId})
+				.then((movie) => {
+					movie.screenings.push(screening);
+					movie.save();
+				})
+				.then(() => {
+					Theater.findOne({'_id': screening.theaterId})
+						.then((theater) => {
+							theater.screenings.push(screening);
+							theater.save();
+						})
+						.then(() => res.status(200).json(screening))
+						.catch((error) => res.status(400).json(error.message));
+				})
+				.catch((error) => res.status(400).json(error.message));
+		})
 		.catch((error) => res.status(400).json(error));
 });
 

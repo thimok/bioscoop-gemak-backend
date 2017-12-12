@@ -9,7 +9,11 @@ const MovieSchema = new Schema({
 	description: String,
 	release: String,
 	genre: String,
-	imageUrl: String
+	imageUrl: String,
+	screenings: [{
+		type: Schema.Types.ObjectId,
+		ref: 'screening'
+	}]
 }, {
 	timestamps: true
 });

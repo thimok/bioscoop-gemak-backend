@@ -9,7 +9,11 @@ const TheaterSchema = new Schema({
 	capacity: {
 		type: Number,
 		required: true
-	}
+	},
+	screenings: [{
+		type: Schema.Types.ObjectId,
+		ref: 'screening'
+	}]
 }, {
 	timestamps: true
 });

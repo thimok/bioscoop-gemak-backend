@@ -6,6 +6,7 @@ var Movie = require('../../model/movie.model');
 
 routes.get('/movies', function (req, res) {
 	Movie.find({})
+		.populate('screenings')
 		.then((movies) => {
 			res.status(200).json(movies);
 		})
@@ -16,6 +17,7 @@ routes.get('/movies/:id', function (req, res) {
 	const id = req.params.id;
 	
 	Movie.find({'_id': id})
+		.populate('screenings')
 		.then((movie) => {
 			res.status(200).json(movie);
 		})
