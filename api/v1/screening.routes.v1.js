@@ -102,17 +102,47 @@ routes.put('/screenings/:id', function (req, res) {
 	const id = req.params.id;
 	const body = req.body;
 	
-	Screening.findByIdAndUpdate({_id: id}, body)
-		.then(() => Screening.findById({_id: id}))
+	Screening.findOne({_id: id})
 		.then((screening) => {
-			if (screening == null || screening == 'null') {
-				res.status(400).json({error: 'No objects updated'});
-			} else {
-				res.status(200).json(screening);
-			}
-		})
-		.catch((error) => res.status(400).json(error));
+			var oldMovie = screening.movieId;
+			var currentMovie = body.movieId;
+			
+			changeScreeningMovie(id, oldMovie, currentMovie)
+				.then(() => {
+					Screening.findByIdAndUpdate({_id: id}, body)
+						.then(() => Screening.findById({_id: id}))
+						.then((screening) => {
+							if (screening == null || screening == 'null') {
+								res.status(400).json({error: 'No objects updated'});
+							} else {
+								res.status(200).json(screening);
+							}
+						})
+						.catch((error) => res.status(400).json(error));
+				});
+		});
 });
+
+function changeScreeningMovie(screeningId, oldMovieId, newMovieId) {
+	return new Promise((resolve, reject) => {
+		Movie.findOne({_id: oldMovieId})
+			.then((movie) => {
+				var pos = movie.screenings.indexOf(screeningId);
+				movie.screenings.splice(pos, 1);
+				movie.save()
+					.then(() => {
+						Movie.findOne({_id: newMovieId})
+							.then((movie) => {
+								movie.screenings.push(screeningId);
+								movie.save()
+									.then(() => {
+										resolve();
+									});
+							});
+					});
+			});
+	});
+}
 
 //DELETE /screenings/:id
 //REQUIRED paramaters:
