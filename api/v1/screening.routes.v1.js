@@ -105,9 +105,27 @@ routes.put('/screenings/:id', function (req, res) {
 	Screening.findOne({_id: id})
 		.then((screening) => {
 			var oldMovie = screening.movieId;
-			var currentMovie = body.movieId;
+			var currentMovie = body.movieId || screening.theaterId;
+			
+			var oldTheater = screening.theaterId;
+			var currentTheater = body.theaterId || screening.theaterId;
+			
+			// changeScreeningMovie(id, oldMovie, currentMovie)
+			// 	.then(() => {
+			// 		Screening.findByIdAndUpdate({_id: id}, body)
+			// 			.then(() => Screening.findById({_id: id}))
+			// 			.then((screening) => {
+			// 				if (screening == null || screening == 'null') {
+			// 					res.status(400).json({error: 'No objects updated'});
+			// 				} else {
+			// 					res.status(200).json(screening);
+			// 				}
+			// 			})
+			// 			.catch((error) => res.status(400).json(error));
+			// 	});
 			
 			changeScreeningMovie(id, oldMovie, currentMovie)
+				.then(() => changeScreeningTheater(id, oldTheater, currentTheater))
 				.then(() => {
 					Screening.findByIdAndUpdate({_id: id}, body)
 						.then(() => Screening.findById({_id: id}))
@@ -125,22 +143,51 @@ routes.put('/screenings/:id', function (req, res) {
 
 function changeScreeningMovie(screeningId, oldMovieId, newMovieId) {
 	return new Promise((resolve, reject) => {
-		Movie.findOne({_id: oldMovieId})
-			.then((movie) => {
-				var pos = movie.screenings.indexOf(screeningId);
-				movie.screenings.splice(pos, 1);
-				movie.save()
-					.then(() => {
-						Movie.findOne({_id: newMovieId})
-							.then((movie) => {
-								movie.screenings.push(screeningId);
-								movie.save()
-									.then(() => {
-										resolve();
-									});
-							});
-					});
-			});
+		if (oldMovieId == newMovieId) {
+			resolve();
+		} else {
+			Movie.findOne({_id: oldMovieId})
+				.then((movie) => {
+					var pos = movie.screenings.indexOf(screeningId);
+					movie.screenings.splice(pos, 1);
+					movie.save()
+						.then(() => {
+							Movie.findOne({_id: newMovieId})
+								.then((movie) => {
+									movie.screenings.push(screeningId);
+									movie.save()
+										.then(() => {
+											resolve();
+										});
+								});
+						});
+				});
+		}
+	});
+}
+
+function changeScreeningTheater(screeningId, oldTheaterId, newTheaterId) {
+	return new Promise((resolve, reject) => {
+		if (oldTheaterId == newTheaterId) {
+			resolve();
+		} else {
+			Theater.findOne({_id: oldTheaterId})
+				.then((theater) => {
+					var pos = theater.screenings.indexOf(screeningId);
+					theater.screenings.splice(pos, 1);
+					theater.save()
+						.then(() => {
+							Theater.findOne({_id: newTheaterId})
+								.then((theater) => {
+									theater.screenings.push(screeningId);
+									theater.save()
+										.then(() => {
+											resolve();
+										});
+								});
+						});
+				});
+		}
 	});
 }
 
