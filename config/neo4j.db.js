@@ -1,3 +1,7 @@
+//////////////////////////
+// Made by Thimo Koolen //
+//////////////////////////
+
 const neo4j = require('neo4j-driver').v1;
 const config = require('./env/env');
 

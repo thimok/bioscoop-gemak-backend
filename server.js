@@ -1,3 +1,7 @@
+//////////////////////////
+// Made by Thimo Koolen //
+//////////////////////////
+
 //Basic requires
 var http = require('http');
 var express = require('express');

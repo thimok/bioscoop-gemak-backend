@@ -1,3 +1,7 @@
+//////////////////////////
+// Made by Thimo Koolen //
+//////////////////////////
+
 var express = require('express');
 var routes = express.Router();
 var mongodb = require('../../config/mongo.db');
@@ -109,20 +113,6 @@ routes.put('/screenings/:id', function (req, res) {
 			
 			var oldTheater = screening.theaterId;
 			var currentTheater = body.theaterId || screening.theaterId;
-			
-			// changeScreeningMovie(id, oldMovie, currentMovie)
-			// 	.then(() => {
-			// 		Screening.findByIdAndUpdate({_id: id}, body)
-			// 			.then(() => Screening.findById({_id: id}))
-			// 			.then((screening) => {
-			// 				if (screening == null || screening == 'null') {
-			// 					res.status(400).json({error: 'No objects updated'});
-			// 				} else {
-			// 					res.status(200).json(screening);
-			// 				}
-			// 			})
-			// 			.catch((error) => res.status(400).json(error));
-			// 	});
 			
 			changeScreeningMovie(id, oldMovie, currentMovie)
 				.then(() => changeScreeningTheater(id, oldTheater, currentTheater))

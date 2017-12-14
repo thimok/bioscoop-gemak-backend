@@ -1,3 +1,7 @@
+//////////////////////////
+// Made by Thimo Koolen //
+//////////////////////////
+
 var env = {
 	webPort: process.env.PORT || 3000,
 	dbHost: process.env.DB_HOST || 'ds044787.mlab.com',
